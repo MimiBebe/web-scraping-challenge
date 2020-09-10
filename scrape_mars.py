@@ -58,7 +58,7 @@ def scrape():
         marsImg.append(curUrl)
     
     # feature image
-    featured_image_url = marsImg[10]  
+    featured_image_url = marsImg[-1]  
 
     marsFactUrl = 'https://space-facts.com/mars/'
     browser.visit(marsFactUrl)  
@@ -69,7 +69,9 @@ def scrape():
     marsFactDf.columns = ['Fact', 'Value']
 
     # mars fact
-    marsFactDf= marsFactDf.set_index('Fact')
+    # marsFactDf= marsFactDf.set_index('Fact')
+    marsFact_htmlTable = marsFactDf.to_html()
+    marsFact_htmlTable = marsFact_htmlTable.replace('\n', '')
 
     marsHemiUrl = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
     browser.visit(marsHemiUrl)
@@ -82,7 +84,6 @@ def scrape():
     hemiTitles = []
     hemiMainUrl = []
 
-    # print the first 5 recent artciles/slides
     for hemi in allHemi:
         linkRef = hemi.find('a')
         link =  rootUrl + linkRef['href']
@@ -104,8 +105,6 @@ def scrape():
         # mars dict with hemisphere images
         marsHemiImg.append(curDict)
 
-    returnList = [{'latestArticle':latestArticleTitle},{'latestArticlePreview':latestArticlePreview},{'marsFactTable': marsFactDf },{'featureImg':featured_image_url},{'hemiImg':marsHemiImg}]
+    returnList = {'latestArticle':latestArticleTitle,'latestArticlePreview':latestArticlePreview,'marsFactTable': marsFact_htmlTable,'featureImg':featured_image_url,'hemiImg':marsHemiImg}
 
     return returnList
-
-marsScrape = scrape()
